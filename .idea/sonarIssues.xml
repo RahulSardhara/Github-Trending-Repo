@@ -28,6 +28,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/TrackWage/app/src/main/java/com/osplabs/trackwage/ui/dashboard/home/HomeFragment.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../Github-Trending-Repos/app/src/main/java/com/an/github/AppConstants.java">
           <value>
             <set />
@@ -234,6 +239,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/graphybyte/githubtrendingrepo/ui/list/GithubRepoViewState.kt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/graphybyte/githubtrendingrepo/ui/list/ScheduleAPICallWorker.kt">
           <value>
             <set />
           </value>

@@ -2,7 +2,12 @@ package com.graphybyte.githubtrendingrepo.ui.list
 
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.Observer
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.graphybyte.githubtrendingrepo.R
 import com.graphybyte.githubtrendingrepo.core.BaseActivity
 import com.graphybyte.githubtrendingrepo.core.Event
@@ -16,10 +21,16 @@ import com.graphybyte.githubtrendingrepo.ui.details.GithubRepoDetailActivity
 import com.graphybyte.githubtrendingrepo.utils.*
 import com.graphybyte.githubtrendingrepo.utils.AppConstants.GITHUB_REPO
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
+
     private val githubRepoViewModel: GithubRepoViewModel by viewModels()
+
+    private lateinit var constraints: Constraints
+
+    private val workManager: WorkManager by lazy { WorkManager.getInstance(this) }
 
     private val githubRepoRecyclerViewAdapter =
         RecyclerListAdapter<GithubEntity, ItemGithubRepoBinding>(
@@ -53,6 +64,7 @@ class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun init() {
         hideStatusBar()
+        setWorkManager()
         githubRepoViewModel.apply {
             binding.viewModel = this
             binding.progressBar.visibility = View.VISIBLE
@@ -75,6 +87,13 @@ class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
         observe(githubRepoViewModel.githubRepoListViewStateLD, githubRepoListLDObserver)
 
         observe(liveData = githubRepoViewModel.errorMessageCommunicator, observer = errorObserver)
+
+    }
+
+    private fun setWorkManager() {
+        constraints = Constraints.Builder().setRequiresCharging(true).setRequiredNetworkType(NetworkType.UNMETERED).build()
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<ScheduleAPICallWorker>(15,TimeUnit.MINUTES,20, TimeUnit.MILLISECONDS).build()
+        workManager.enqueue(periodicWorkRequest)
 
     }
 
