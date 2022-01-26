@@ -22,6 +22,7 @@ class GithubRepoRepository @Inject constructor(
     fun getGithubRepo(pageNumber: Long): Flow<State<GithubApiResponse>> {
         return object : NetworkToDBProvider<GithubApiResponse>() {
             override suspend fun saveRemoteData(response: GithubApiResponse) {
+                getPageNumber()
                 withContext(Dispatchers.IO) {
                     val repos = response.items?.map { data ->
                         GithubEntity(

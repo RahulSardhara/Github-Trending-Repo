@@ -36,5 +36,4 @@ class App:Application() {
         WorkManager.getInstance(this).enqueue(periodicWorkRequest)
     }
 
-
 }
