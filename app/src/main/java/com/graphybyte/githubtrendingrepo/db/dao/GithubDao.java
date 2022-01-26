@@ -19,4 +19,6 @@ public interface GithubDao {
     @Query("SELECT * FROM `GithubEntity` where page = :page")
     List<GithubEntity> getRepositoriesByPage(Long page);
 
+    @Query("SELECT MAX(page) FROM `GithubEntity`")
+    Long getLastPageNumber();
 }

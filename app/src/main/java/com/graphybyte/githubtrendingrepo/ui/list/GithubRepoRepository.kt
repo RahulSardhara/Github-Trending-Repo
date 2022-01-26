@@ -57,4 +57,51 @@ class GithubRepoRepository @Inject constructor(
 
         }.asFlow()
     }
+
+    fun getGithubRepoBackground(): Flow<State<GithubApiResponse>> {
+        return object : NetworkToDBProvider<GithubApiResponse>() {
+            override suspend fun saveRemoteData(response: GithubApiResponse) {
+                withContext(Dispatchers.IO) {
+                    val repos = response.items?.map { data ->
+                        GithubEntity(
+                            id = data.id,
+                            page = getPageNumber(),
+                            totalPages = response.items.size.toLong(),
+                            name = data.name ?: "",
+                            fullName = data.fullName ?: "",
+                            owner = data.owner,
+                            htmlUrl = data.htmlUrl ?: "",
+                            description = data.description ?: "",
+                            contributorsUrl = data.contributorsUrl ?: "",
+                            createdAt = data.createdAt ?: "",
+                            starsCount = data.starsCount ?: 0,
+                            watchers = data.watchers ?: 0,
+                            forks = data.forks ?: 0,
+                            language = data.language ?: ""
+                        )
+                    }
+                    repos?.let {
+                        appDB.githubDao().insertRepositories(it)
+                    }
+                }
+            }
+
+            override suspend fun fetchFromLocal(): Flow<GithubApiResponse> {
+                return flowOf(GithubApiResponse(0, withContext(Dispatchers.IO) { appDB.githubDao().getRepositoriesByPage(getPageNumber()) }))
+            }
+
+            override suspend fun fetchFromRemote(): Response<GithubApiResponse> {
+                return githubAPI.getGithubRepos(AppConstants.SORT, AppConstants.ORDER, getPageNumber(), AppConstants.PLATFORM)
+            }
+
+        }.asFlow()
+    }
+
+    suspend fun getPageNumber(): Long {
+        var pageNumber: Long = 0
+        withContext(Dispatchers.IO) {
+            pageNumber = appDB.githubDao().lastPageNumber
+        }
+        return pageNumber
+    }
 }

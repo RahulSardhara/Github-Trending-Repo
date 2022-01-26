@@ -7,16 +7,14 @@ import javax.inject.Inject
 
 class ScheduleAPICallWorker constructor(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
 
-
     @Inject
-    lateinit var viewmodel: GithubRepoViewModel
+    lateinit var githubRepoRepository: GithubRepoRepository
 
     override fun doWork(): Result {
-        viewmodel?.let {
-            it.pageNumber = it.pageNumber + 1
-            it.getGithubRepoList()
-            return Result.success()
-        }
+       githubRepoRepository?.let {
+           it.getGithubRepoBackground()
+           return Result.success()
+       }
         return Result.failure()
     }
 

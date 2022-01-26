@@ -28,9 +28,7 @@ class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
 
     private val githubRepoViewModel: GithubRepoViewModel by viewModels()
 
-    private lateinit var constraints: Constraints
 
-    private val workManager: WorkManager by lazy { WorkManager.getInstance(this) }
 
     private val githubRepoRecyclerViewAdapter =
         RecyclerListAdapter<GithubEntity, ItemGithubRepoBinding>(
@@ -64,7 +62,6 @@ class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun init() {
         hideStatusBar()
-        setWorkManager()
         githubRepoViewModel.apply {
             binding.viewModel = this
             binding.progressBar.visibility = View.VISIBLE
@@ -91,9 +88,7 @@ class GithubRepoListActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun setWorkManager() {
-        constraints = Constraints.Builder().setRequiresCharging(true).setRequiredNetworkType(NetworkType.UNMETERED).build()
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<ScheduleAPICallWorker>(15,TimeUnit.MINUTES,20, TimeUnit.MILLISECONDS).build()
-        workManager.enqueue(periodicWorkRequest)
+
 
     }
 
